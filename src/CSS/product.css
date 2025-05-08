@@ -1,0 +1,18 @@
+.product-image {
+    height: 200px;
+    object-fit: contain;
+    background: #f8f9fa;
+  }
+  
+  .product-image.fallback {
+    padding: 20px;
+    object-fit: scale-down;
+  }
+  
+  .carousel-indicators {
+    bottom: -30px;
+  }
+  
+  .carousel-indicators button {
+    background-color: #6c757d;
+  }
