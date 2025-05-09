@@ -1,73 +1,77 @@
-// import { Button, Card, Badge, Spinner } from 'react-bootstrap';
-// import { useState } from 'react';
-// import pc from "../images/ordinateur-portable-hp-dragonfly-g4-96z84et.jpg";
-// import "../CSS/product.css";
-// import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Card, Badge } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import image1 from '../images/ordinateur-portable-hp-dragonfly-g4-96z84et.jpg';
 
-// export default function Product({ products }) {
-//   const [mainImage] = useState(() => {
-//     const img = [products.Image, products.Image2, products.Image3, products.Image4, products.Image5]
-//       .find(img => img !== null);
-    
-//     if (img && !img.startsWith('http')) {
-//       return `http://127.0.0.1:8000/storage/${img.replace('public/', '')}`;
-//     }
-//     return img || pc;
-//   });
+const ProductCard = ({ id = 1 }) => {
+  const [isHovered, setIsHovered] = useState(false);
 
-//   if (!products) {
-//     return (
-//       <Card style={{ width: '18rem', height: '25em' }}>
-//         <Card.Body className="d-flex justify-content-center align-items-center">
-//           <Spinner animation="border" variant="warning" />
-//         </Card.Body>
-//       </Card>
-//     );
-//   }
+  const image = image1;
+  const title = 'Gaming Laptop';
+  const price = 1299.99;
+  const rating = 4;
+  const reviews = 87;
+  const isNew = true;
 
-//   const { name, Prix, Quantité_en_stock ,id,type} = products;
-//   const originalPrice = parseFloat(Prix) * 1.2;
-//   const discount = originalPrice - Prix;
+  return (
+    <Card
+      className="shadow-sm border-0 position-relative"
+      style={{ width: '18rem', cursor: 'pointer' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {isNew && (
+        <div className="position-absolute top-0 start-0 m-2">
+          <Badge bg="danger">SOLD</Badge>
+        </div>
+      )}
 
-//   return (
-//     <div className="position-relative d-inline-block m-3">
-//       <Card style={{ width: '18rem', height: '25em' }}> 
+      <Link
+        to={`/Details/${id}`}
+        style={{
+          position: 'absolute',
+          top: '0.5rem',
+          right: '0.5rem',
+          zIndex: 10,
+          backgroundColor: '#F5F7F8',
+          borderRadius: '50%',
+          padding: '6px',
+          opacity: isHovered ? 1 : 0,
+          transition: 'opacity 0.3s ease',
+          color: 'black',
+        }}
+      >
+        <i className="bi bi-eye-fill fs-5"></i>
+      </Link>
 
-//       <Link to={`/Details/${id}/${type}`} onClick={() => console.log(`Navigating to: /Details/${id}/${type}`)}>
-//         <Card.Img variant="top" src={mainImage} loading="lazy" alt={name} className="product-image"
-//           onError={(e) => {
-//             e.target.onerror = null;
-//             e.target.src = pc;
-//             e.target.className = "product-image fallback";
-//           }}
-//           style={{ width: "100%", height: "200px", objectFit: 'contain',backgroundColor: '#f8f9fa' }}
-//         />
-//         </Link>
-        
-//         <Card.Body>
-//           <Card.Title>{name.substring(0, 35)} ...</Card.Title>
-//           <div className="d-flex justify-content-between align-items-center">
-//             <div>
-//               <span className="text-decoration-line-through text-muted me-2">
-//                 {originalPrice.toFixed(2)} DH
-//               </span>
-//               <span className="h5">{Prix} DH</span>
-//             </div>
-//           </div>
-//           <Badge bg={Quantité_en_stock > 0 ? "success" : "danger"}>
-//             {Quantité_en_stock > 0 ? "In Stock" : "Out of Stock"}
-//           </Badge>
-//           {discount > 0 && (
-//             <Badge bg="danger" className="mt-2">
-//               Save {discount.toFixed(2)} DH
-//             </Badge>
-//           )}
-          
-//           <Button variant="warning" className="w-100 mt-3">
-//             View Details
-//           </Button>
-//         </Card.Body>
-//       </Card>
-//     </div>
-//   );
-// }
+      <Card.Img
+        variant="top"
+        src={image}
+        style={{
+          backgroundColor: '#F5F7F8',
+          height: '200px',
+          objectFit: 'contain',
+        }}
+      />
+
+      <Card.Body>
+        <Card.Title className="mb-2">{title}</Card.Title>
+        <h5 className="text-primary">${price}</h5>
+
+        <div className="d-flex align-items-center mb-2">
+          {[...Array(5)].map((_, index) => (
+            <i
+              key={index}
+              className={`bi ${index < rating ? 'bi-star-fill' : 'bi-star'} text-warning me-1`}
+            />
+          ))}
+          <small className="text-muted ms-1">({reviews})</small>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export default ProductCard;
+

@@ -1,85 +1,29 @@
-import { Row,Col,Button,Form,Navbar,InputGroup,Offcanvas } from 'react-bootstrap';
-import search from '../images/chercher.png';
 import logo from '../images/logo.jpg'
-import "../CSS/devis.css"
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Navbar, Nav, Container } from 'react-bootstrap';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
-
-
-
-import { useState } from 'react';
-import axios from 'axios'; // Make sure to install axios
-
-export default function Navvv({ onSearchResults }){
-    const [show, setShow] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchType, setSearchType] = useState('Open this select menu');
-  
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    
-    const handleSearch = async () => {
-      try {
-          const response = await axios.get('http://localhost:8000/api/search', {
-              params: {
-                  query: searchQuery,
-                  type: searchType === 'Open this select menu' ? '' : searchType
-              }
-          });
-          onSearchResults(response.data);
-      } catch (error) {
-          console.error('Search error:', error);
-          // Optionally show error to user
-      }
-  };
-    
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            handleSearch();
-        }
-    };
-  
+const CustomNavbar = () => {
     return (
-        <Navbar className="bg-white justify-content-around mt-3" >
-            <Row className='d-flex justify-content-between'>
-                <Col><Link to='/'><img src={logo} alt='logo' style={{width:'60px'}} /></Link></Col>
-                <Col>
-                    <Row>
-                        <InputGroup className='flex-nowrap'>
-                            <Form.Select 
-                                aria-label="Product type select"
-                                value={searchType}
-                                onChange={(e) => setSearchType(e.target.value)}
-                            >
-                                <option>Open this select menu</option>
-                                <option value="ORDINATEUR">Ordinateur</option>
-                                <option value="IMPRIMANTE">Imprimante</option>
-                                <option value="TABLETTE GRAPHIQUE">Tablette</option>                                
-                                <option value="ECRAN">Moniteur</option>                   
-                                <option value="CLAVIER">Clavier</option>
-                                <option value="SOURIS">Souris</option>
-                                <option value="Stockage">Stockage</option>
-                            </Form.Select>
-                            <Form.Control 
-                                placeholder="Chercher d'un produit..." 
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onKeyPress={handleKeyPress}
-                                style={{width:"500px"}} 
-                            />
-                            <InputGroup id="basic-addon2"> 
-                                <Button 
-                                    style={{backgroundColor:'#129cb8'}}
-                                    onClick={handleSearch}
-                                >
-                                    <img src={search} alt='search icon' style={{ width:30,height:'auto',backgroundColor:'#129cb8'}}/>
-                                </Button>
-                            </InputGroup>
-                        </InputGroup>
-                    </Row>
-                </Col>
-                {/* Rest of your component remains the same */}
-            </Row>
-        </Navbar>
+    <Navbar expand="lg" style={{ backgroundColor: '#fff', borderBottom: '1px solid #eee' }}>
+        <Container fluid style={{ justifyContent: 'space-between' }}>
+        
+        <Nav className="me-auto" style={{ gap: '2rem' }}>
+            <Nav.Link href="/" style={{ color: '#000' }}><img src={logo} alt='logo' style={{width:'50px'}} /></Nav.Link>
+            <Nav.Link href="/" style={{ color: '#000' }}>Home</Nav.Link>
+            <Nav.Link href="/contact" style={{ color: '#000' }}>Contact</Nav.Link>
+            <Nav.Link href="/about" style={{ color: '#000' }}>About</Nav.Link>
+            <Nav.Link href="/signup" style={{ color: '#000' }}>Sign Up</Nav.Link>
+        </Nav>
+
+        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+            <i className="bi bi-cart-fill" style={{ fontSize: '1.5rem', color: '#1E3A8A' }}></i>
+            <a href='/login'><i className="bi bi-person" style={{ fontSize: '1.5rem', color: '#000' }}></i></a>
+        </div>
+
+        </Container>
+    </Navbar>
     );
-}
+};
+
+export default CustomNavbar;

@@ -1,73 +1,46 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Link } from 'react-router-dom';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
+
+
+const components = [
+  "processeur",
+  "Mother board",
+  "graphique card",
+  "power supply",
+  "cooling",
+  "storage",
+  "ram",
+  "case"
+];
 
 const Accessor = () => {
   return (
-    <div className="container mt-4" >
-            <div className='d-flex justify-content-around '>
-                <h5 className='text-center'>processeur</h5>
-                <div>
-                    <span>Add</span>
-                    <i className="bi bi-plus-circle text-primary"></i>
-                </div>
-            </div>
+    
+    <div className="container py-4" >
+    <Breadcrumb>
+      <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
+      <Breadcrumb.Item active style={{color:'black'}}>Configer</Breadcrumb.Item>
+    </Breadcrumb>
 
-            <div className='d-flex justify-content-around '>
-                <h5 className='text-center'>Mother board</h5>
-                <div>
-                    <span>Add</span>
-                    <i className="bi bi-plus-circle text-primary"></i>
-                </div>
+      <div className="d-flex flex-column gap-3">
+        {components.map((item, idx) => (
+          <div key={idx} className="card shadow-sm">
+            <div className="card-body d-flex justify-content-between align-items-center" style={{ backgroundColor: '#d3d3d3' }}>
+              <h5 className="mb-0 text-capitalize">{item}</h5>
+              <Link
+                to={`/add?type=${encodeURIComponent(item)}`}
+                className="btn text-white"
+                style={{ backgroundColor: '#1E3A8A' }}
+              >
+                <i className="bi bi-plus-circle me-2"></i> Add
+              </Link>
             </div>
-
-            <div className='d-flex justify-content-around '>
-                <h5 className='text-center'>graphique card</h5>
-                <div>
-                    <span>Add</span>
-                    <i className="bi bi-plus-circle text-primary"></i>
-                </div>
-            </div>
-
-            <div className='d-flex justify-content-around '>
-                <h5 className='text-center'>power supply</h5>
-                <div>
-                    <span>Add</span>
-                    <i className="bi bi-plus-circle text-primary"></i>
-                </div>
-            </div>
-
-            <div className='d-flex justify-content-around '>
-                <h5 className='text-center'>cooling</h5>
-                <div>
-                    <span>Add</span>
-                    <i className="bi bi-plus-circle text-primary"></i>
-                </div>
-            </div>
-
-            <div className='d-flex justify-content-around '>
-                <h5 className='text-center'>storage</h5>
-                <div>
-                    <span>Add</span>
-                    <i className="bi bi-plus-circle text-primary"></i>
-                </div>
-            </div>
-
-            <div className='d-flex justify-content-around ' style={{backgroundColor:'gray'}}>
-                <h5 className='text-center'>ram</h5>
-                <div>
-                    <span>Add</span>
-                    <i className="bi bi-plus-circle text-primary"></i>
-                </div>
-            </div>
-
-            <div className='d-flex justify-content-around '>
-                <h5 className='text-center'>case</h5>
-                <div>
-                    <span>Add</span>
-                    <i className="bi bi-plus-circle text-primary"></i>
-                </div>
-            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

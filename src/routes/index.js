@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Devis from "../PAGES/devis";
 import Aboutt from "../PAGES/about";
+import Contact from "../PAGES/Contact";
 import Home from "../PAGES/Home";
 import Login from "../PAGES/login";
 import Profil from "../PAGES/profil";
@@ -23,19 +24,19 @@ export const router = createBrowserRouter([
                 element:<Aboutt />
             },
             {
-                path:'/devis',
-                element:<Devis/>
+                path:'/Contact',
+                element:<Contact/>
             },
             {
-                path:'/login',
-                element:<Login/>
+                path:'/devis',
+                element:<Devis/>
             },
             {
                 path:'/profil',
                 element:<Profil/>
             },
             {
-                path:'/accessor',
+                path:'/Configer',
                 element:<Accessor/>
             },
             {
@@ -43,8 +44,16 @@ export const router = createBrowserRouter([
                 element:<Productfull/>
             },
             
-        ],
-    },
+        ]},        
+        {
+            path:'/login',
+            element:<Login/>
+        },
+        {
+            path:'/signup',
+            element:<Login/>
+        },
+    
     {
         path:'*',
         element:<NotFound/>,

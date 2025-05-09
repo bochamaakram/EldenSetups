@@ -1,14 +1,10 @@
-import React, { useState } from 'react'; // Add useState for state management
-import Col from 'react-bootstrap/Col';
-import Nav from 'react-bootstrap/Nav';
-import Row from 'react-bootstrap/Row';
-import Tab from 'react-bootstrap/Tab';
-import Button from 'react-bootstrap/Button'; // Import Button from react-bootstrap
-import Form from 'react-bootstrap/Form'; // Correct Form import
-import AddProduct from '../components/FormProduct';
+import React, { useState } from 'react';
+import { Tab, Row, Col, Nav, Form, Button } from 'react-bootstrap';
+import AddProduct from '../components/FormProduct'; // ✅ Make sure this path is correct
+import Statistics from '../components/static';
 
 export default function Profil() {
-  const [validated, setValidated] = useState(false); // Define validated state
+  const [validated, setValidated] = useState(false);
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;
@@ -20,80 +16,103 @@ export default function Profil() {
   };
 
   return (
-    <Tab.Container id="left-tabs-example" defaultActiveKey="first">
-      <Row>
+    <Tab.Container defaultActiveKey="profile">
+      <Row style={{ padding: '2rem' }}>
+        {/* Sidebar */}
         <Col sm={3}>
-          <Nav variant="pills" className="flex-column">
-            <Nav.Item>
-              <Nav.Link eventKey="first">Profile</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="second">Ajouter un produit</Nav.Link>
-            </Nav.Item>
+          <h6 style={{ fontWeight: 'bold', color: '#000' }}>Manage My Account</h6>
+          <Nav className="flex-column" style={{ marginBottom: '1.5rem' }}>
+            <Nav.Link eventKey="profile" style={{ color: '#000' }}>My Profile</Nav.Link>
+            <Nav.Link style={{ color: '#777' }}>Address Book</Nav.Link>
+            <Nav.Link style={{ color: '#777' }}>My Payment Options</Nav.Link>
+          </Nav>
+
+          <h6 style={{ fontWeight: 'bold', color: '#000' }}>My Orders</h6>
+          <Nav className="flex-column" style={{ marginBottom: '1.5rem' }}>
+            <Nav.Link style={{ color: '#777' }}>My Returns</Nav.Link>
+            <Nav.Link style={{ color: '#777' }}>My Cancellations</Nav.Link>
+          </Nav>
+
+
+          <h6 style={{ fontWeight: 'bold', color: '#000', marginTop: '2rem' }}>Admin Tools</h6>
+          <Nav className="flex-column">
+            <Nav.Link eventKey="addProduct" style={{ color: '#0d6efd' }}>
+              Add Product
+            </Nav.Link>
+            <Nav.Link eventKey="statistics">
+              Statistics
+            </Nav.Link>
           </Nav>
         </Col>
+
         <Col sm={9}>
           <Tab.Content>
-            <Tab.Pane eventKey="first" className="m-2 h-100">
-              <Form
-                noValidate
-                validated={validated}
-                onSubmit={handleSubmit}
-                className="d-flex flex-column justify-content-center align-content-center"
-              >
-                <Row className="m-2 align-items-center">
-                  <Form.Group controlId="validationCustom01" className="p-2 d-flex justify-content-center">
-                    <Form.Control required readOnly type="text" placeholder="USERNAME"
-                      style={{
-                        width: '300px',
-                        textAlign: 'center',
-                        height: '50px',
-                        borderRadius: '5px',
-                      }} />
+            <Tab.Pane eventKey="profile">
+              <div style={{
+                backgroundColor: '#fff',
+                padding: '2rem',
+                borderRadius: '6px',
+                boxShadow: '0 0 10px rgba(0,0,0,0.05)',
+              }}>
+                <h5 style={{ color: '#0d6efd', marginBottom: '1.5rem', fontWeight: 'bold' }}>
+                  Edit Your Profile
+                </h5>
+
+                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                  <Row className="mb-3">
+                    <Col>
+                      <Form.Group controlId="firstName">
+                        <Form.Control type="text" placeholder="First Name" defaultValue="Md"
+                          style={{ height: '45px', borderRadius: '4px' }} readOnly />
+                      </Form.Group>
+                    </Col>                    
+                    <Col>
+                    </Col>
+                  </Row>
+
+                  <Row className="mb-3">
+                    <Col>
+                      <Form.Group controlId="email">
+                        <Form.Control type="email" placeholder="Email" defaultValue="rimel1111@gmail.com"
+                          style={{ height: '45px', borderRadius: '4px' }} readOnly />
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                    </Col>
+                  </Row>
+
+                  <h6 style={{ margin: '1.5rem 0 1rem', fontWeight: 'bold' }}>Password Changes</h6>
+
+                  <Form.Group controlId="newPass" className="mb-3">
+                    <Form.Control type="password" placeholder="New Password"
+                      style={{ height: '45px', borderRadius: '4px' }} />
+                  </Form.Group>
+                  <Form.Group controlId="confirmPass" className="mb-4">
+                    <Form.Control type="password" placeholder="Confirm New Password"
+                      style={{ height: '45px', borderRadius: '4px' }} />
                   </Form.Group>
 
-                  <Form.Group
-                    controlId="validationCustom04"
-                    className="p-2 d-flex justify-content-center"
-                  >
-                    <Form.Control
-                      required
-                      readOnly
-                      type="text"
-                      placeholder="EMAIL"
-                      style={{
-                        width: '300px',
-                        height: '50px',
-                        textAlign: 'center',
-                        borderRadius: '5px',
-                      }}
-                    />
-                  </Form.Group>
-
-                  <Form.Group
-                    controlId="validationCustom02"
-                    className="p-2 d-flex justify-content-center"
-                  >
-                    <Form.Control
-                      required
-                      type="text"
-                      placeholder="MOT DE PASS"
-                      style={{
-                        width: '300px',
-                        textAlign: 'center',
-                        height: '50px',
-                        borderRadius: '5px',
-                      }}
-                    />
-                  </Form.Group>
-                </Row>
-                <Button type="submit" >
-                  MODIFIER
-                </Button>
-              </Form>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                    <Button variant="light" style={{ border: 'none' }}>Cancel</Button>
+                    <Button type="submit" style={{
+                      backgroundColor: '#0d6efd',
+                      borderColor: '#0d6efd',
+                      padding: '0.5rem 1.5rem',
+                      borderRadius: '4px'
+                    }}>
+                      Save Changes
+                    </Button>
+                  </div>
+                </Form>
+              </div>
             </Tab.Pane>
-            <Tab.Pane eventKey="second">
+
+            <Tab.Pane eventKey="addProduct">
               <AddProduct />
+            </Tab.Pane>
+
+            <Tab.Pane eventKey="statistics">
+              <Statistics />
             </Tab.Pane>
           </Tab.Content>
         </Col>
