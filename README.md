@@ -24,11 +24,11 @@ RAMSYSA is a comprehensive platform for sourcing laptop components and professio
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/ramsysa.git
+   git clone https://github.com/bochamaakram/EldenSetup.git
    ```
 2. Install dependencies:
    ```bash
-   cd ramsysa
+   cd EldenSetup
    npm install
    ```
 
