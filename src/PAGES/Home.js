@@ -88,24 +88,8 @@ export default function Home() {
     return ( 
         <>
             {/* Navigation and Slider Section */}
-            <Row className="mt-5 mb-5">
-                <Col className="text-center d-flex flex-column" md={3}>
-                    <ul style={{listStyleType:"none", padding:"0", marginLeft:"100px"}}>
-                        {staticCategories.map((category) => (
-                            <li key={category.id}>
-                                <a href={`/category/${category.id}`} style={{
-                                    textDecoration:"none", 
-                                    color:"black",
-                                    display:'flex',
-                                    justifyContent:'start'
-                                }}>
-                                    {category.name}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </Col>
-                <Col className="text-center d-flex flex-column" md={9}>
+            <Row className=" mb-5">
+                <Col className="text-center d-flex flex-column" md={12}>
                     <Slider/>
                 </Col>
             </Row>

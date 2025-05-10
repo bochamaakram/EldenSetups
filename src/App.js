@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css"
+import ChatBot from './components/ChatBot';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './routes/index';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,7 +13,9 @@ function App() {
     document.head.appendChild(meta);
   }
 
-  return (<>
+  return (
+  <>
+      <ChatBot />
     <RouterProvider router={router} />
     </>
   );

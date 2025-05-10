@@ -22,29 +22,42 @@ function Register() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Register</h2>
+      <h2>Create an account</h2>
       {error && <p>{error}</p>}
+
+      <div class="form-group">
       <input
         type="text"
-        placeholder="Name"
+        id="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
       />
+      <label for="Name">Name</label>
+      </div>
+
+
+      <div class="form-group">
       <input
         type="email"
-        placeholder="Email"
+        id="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
       />
+      <label for="Email">Email</label>
+      </div>
+
+      <div class="form-group">
       <input
         type="password"
-        placeholder="Password"
+        id="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
       />
+      <label for="Password">Password</label>
+      </div>
       <button type="submit">Register</button>
     </form>
   );

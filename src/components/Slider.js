@@ -68,7 +68,7 @@ const Slider = () => {
     heroSection: {
       position: 'relative',
       width: '100%',
-      height: '70vh',
+      height: '90vh',
       overflow: 'hidden'
     },
     heroSlideshow: {
@@ -94,7 +94,7 @@ const Slider = () => {
       left: 0,
       width: '100%',
       height: '100%',
-      backgroundSize: 'contain',
+      backgroundSize: 'cover',
       backgroundPosition: 'center',
       zIndex: -1
     },

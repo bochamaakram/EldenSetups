@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import '../CSS/ContactPage.css';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
+
+
+
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -55,11 +59,12 @@ const ContactPage = () => {
   return (
     <div className="contact-page">
 
-      {/* Breadcrumbs */}
-      <div className="breadcrumbs">
-        <span>Home</span> / 
-        <span className="active">Contact</span>
-      </div>
+      <Breadcrumb>
+      <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
+      
+      <Breadcrumb.Item active>Contact</Breadcrumb.Item>
+    </Breadcrumb>
+  
 
       <div className="contact-container">
         <div className="contact-info">
