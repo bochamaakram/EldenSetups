@@ -1,9 +1,7 @@
-Here's a cleaner and more professional README header for your **RAMSYSA** project:
+Here's a cleaner and more professional README header for your **EldenSetup** project:
 
 ```markdown
-# RAMSYSA - Laptop Components & Repair Solutions
-
-![RAMSYSA Logo] <!-- Add your logo here if available -->
+# EldenSetup - Laptop Components & Repair Solutions
 
 RAMSYSA is a comprehensive platform for sourcing laptop components and professional repair services. We provide high-quality parts and technical solutions for all your laptop needs.
 
