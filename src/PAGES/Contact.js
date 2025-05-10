@@ -17,12 +17,40 @@ const ContactPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log('Form submitted:', formData);
-    // You would typically send this data to your backend
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    const response = await fetch('http://localhost:8000/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+
+    const data = await response.json();
+    
+    if (response.ok) {
+      console.log('Form submitted successfully:', data);
+      // Clear the form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        message: ''
+      });
+      // Show success message to user
+      alert('Thank you for your message! We will contact you soon.');
+    } else {
+      throw new Error(data.message || 'Failed to submit form');
+    }
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    alert('There was an error submitting your form. Please try again.');
+  }
+};
 
   return (
     <div className="contact-page">

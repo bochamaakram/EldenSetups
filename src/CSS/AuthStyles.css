@@ -1,0 +1,135 @@
+/* Auth container styles */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  min-height: 100vh;
+  align-items: center;
+  background-color: #f5f5f5;
+}
+
+/* Form styles */
+.auth-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 350px;
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.auth-form h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #666;
+  font-weight: normal;
+  font-size: 1rem;
+}
+
+/* Input styles */
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Button styles */
+.auth-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+.auth-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Link styles */
+.auth-form a {
+  color: #007bff;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.auth-form a:hover {
+  text-decoration: underline;
+}
+
+/* Error message */
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Divider */
+.divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #666;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+/* Google button */
+.google-btn {
+  background-color: white !important;
+  color: #333 !important;
+  border: 1px solid #ddd !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.google-btn:hover {
+  background-color: #f5f5f5 !important;
+}
+
+/* Additional text styles */
+.auth-form p {
+  text-align: center;
+  color: #666;
+  margin-top: 1rem;
+}

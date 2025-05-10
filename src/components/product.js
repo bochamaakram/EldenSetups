@@ -1,18 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import image1 from '../images/ordinateur-portable-hp-dragonfly-g4-96z84et.jpg';
+import axios from 'axios';
 
-const ProductCard = ({ id = 1 }) => {
+const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [productData, setProductData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const image = image1;
-  const title = 'Gaming Laptop';
-  const price = 1299.99;
-  const rating = 4;
-  const reviews = 87;
-  const isNew = true;
+  // Fetch product data from API if not passed as prop
+  useEffect(() => {
+    if (!product) {
+      const fetchProductData = async () => {
+        try {
+          // Replace with your actual API endpoint
+          const response = await axios.get(`http://localhost:8000/api/products/${id}`);
+          setProductData(response.data);
+          setLoading(false);
+        } catch (err) {
+          setError(err.message);
+          setLoading(false);
+          console.error("Error fetching product data:", err);
+        }
+      };
+
+      fetchProductData();
+    } else {
+      setProductData(product);
+      setLoading(false);
+    }
+  }, [product]);
+
+  if (loading) return <div>Loading product...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!productData) return <div>No product data available</div>;
+
+  const { id, name: title, price, image, rating = 4, reviews = 0, isNew = false } = productData;
 
   return (
     <Card
@@ -47,7 +72,7 @@ const ProductCard = ({ id = 1 }) => {
 
       <Card.Img
         variant="top"
-        src={image}
+        src={image || 'https://via.placeholder.com/200'} // Fallback image if none provided
         style={{
           backgroundColor: '#F5F7F8',
           height: '200px',
@@ -74,4 +99,3 @@ const ProductCard = ({ id = 1 }) => {
 };
 
 export default ProductCard;
-

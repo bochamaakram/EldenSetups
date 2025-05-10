@@ -1,0 +1,30 @@
+.messages-container {
+  margin: 2rem auto;
+  max-width: 1200px;
+}
+
+.messages-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.messages-table th, .messages-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.messages-table th {
+  background-color: #f2f2f2;
+  position: sticky;
+  top: 0;
+}
+
+.messages-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.messages-table tr:hover {
+  background-color: #f1f1f1;
+}

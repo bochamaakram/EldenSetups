@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Badge, Spinner, Alert, Container, Row, Col } from 'react-bootstrap';
+import { Button, Spinner, Alert, Container, Row, Col } from 'react-bootstrap';
 import defaultImage from "../images/ordinateur-portable-hp-dragonfly-g4-96z84et.jpg";
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const API_BASE_URL = 'http://localhost:8000/api';
 
 const getImageUrl = (imagePath) => {
   if (!imagePath) return defaultImage;
@@ -13,8 +13,8 @@ const getImageUrl = (imagePath) => {
   return `${API_BASE_URL}/${imagePath.replace(/^\/+/, '')}`;
 };
 
-export default function Productfull() {
-  const { type, id } = useParams();
+export default function ProductFull() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,62 +24,57 @@ export default function Productfull() {
 
   const addToCart = async () => {
     try {
-        // First check authentication
-        const authCheck = await fetch('http://127.0.0.1:8000/api/check-auth', {
-            credentials: 'include'
-        });
+      // First check authentication
+      const authCheck = await fetch(`${API_BASE_URL}/check-auth`, {
+        credentials: 'include'
+      });
+      
+      if (!authCheck.ok) {
+        // Store intended URL before redirecting to login
+        localStorage.setItem('intended_url', window.location.pathname);
+        window.location.href = 'http://localhost:8000/login';
+        return;
+      }
+  
+      // If authenticated, add to cart
+      const response = await fetch(`${API_BASE_URL}/cart/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          product_id: id,
+          quantity: 1,
+          price: product.price,
+          name: product.name,
+          image: productImages[0] || null
+        })
+      });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to add to cart');
+      }
+  
+      const result = await response.json();
+      if (result.success) {
+        alert('Product added to cart successfully!');
         
-        if (!authCheck.ok) {
-            // Store intended URL before redirecting to login
-            localStorage.setItem('intended_url', window.location.pathname);
-            window.location.href = 'http://127.0.0.1:8000/login';
-            return;
+        // Update cart counter in navbar if exists
+        const cartCounter = document.getElementById('cart-counter');
+        if (cartCounter) {
+          const currentCount = parseInt(cartCounter.textContent) || 0;
+          cartCounter.textContent = currentCount + 1;
         }
-    
-        // If authenticated, add to cart
-        const response = await fetch('http://127.0.0.1:8000/api/cart/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-                product_id: id,
-                product_type: type,
-                quantity: 1,
-                price: product.Prix,
-                name: product.name,
-                image: productImages[0] || null
-            })
-        });
-    
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Failed to add to cart');
-        }
-    
-        const result = await response.json();
-        if (result.success) {
-            // Show success message
-            alert('Product added to cart successfully!');
-            
-            // You can also update a cart counter in your navbar if you have one
-            const cartCounter = document.getElementById('cart-counter');
-            if (cartCounter) {
-                const currentCount = parseInt(cartCounter.textContent) || 0;
-                cartCounter.textContent = currentCount + 1;
-            }
-            
-            // Optionally navigate to cart
-            // navigate('/cart');
-        }
+      }
     } catch (error) {
-        console.error('Error:', error);
-        alert(error.message);
+      console.error('Error:', error);
+      alert(error.message);
     }
-};
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -87,34 +82,32 @@ export default function Productfull() {
         setLoading(true);
         setError(null);
         
-        const endpoint = `${API_BASE_URL}/Details/${type}/${id}`;
-        console.log('Fetching from:', endpoint);
-
-        const response = await fetch(endpoint);
+        const response = await fetch(`${API_BASE_URL}/products/${id}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const result = await response.json();
-        setProduct(result.data);
+        setProduct(result);
         
+        // Process images
         const images = [];
         
-        if (result.data.Image) images.push(result.data.Image);
-        if (result.data.image) images.push(result.data.image);
-        if (result.data.images?.main) images.push(result.data.images.main);
+        // Add main image if exists
+        if (result.image) images.push(result.image);
         
-        if (result.data.images?.gallery && Array.isArray(result.data.images.gallery)) {
-          images.push(...result.data.images.gallery);
+        // Add gallery images if exists
+        if (result.images && Array.isArray(result.images)) {
+          images.push(...result.images);
         }
         
-        const validImages = images.filter(img => img);
+        setProductImages(images);
         
-        setProductImages(validImages);
-        
-        if (validImages.length > 0) {
-          setCurrentImg(getImageUrl(validImages[0]));
+        if (images.length > 0) {
+          setCurrentImg(getImageUrl(images[0]));
+        } else {
+          setCurrentImg(defaultImage);
         }
       } catch (err) {
         console.error('Fetch error:', err);
@@ -126,9 +119,9 @@ export default function Productfull() {
     };
 
     fetchProduct();
-  }, [type, id, navigate]);
+  }, [id, navigate]);
 
-  const handleClick = (img) => {
+  const handleImageClick = (img) => {
     setCurrentImg(getImageUrl(img));
   };
 
@@ -145,7 +138,7 @@ export default function Productfull() {
   if (error) {
     return (
       <Alert variant="danger" className="mt-4">
-        {error} - Redirecting to products page...
+        {error} - Redirecting to home page...
       </Alert>
     );
   }
@@ -159,16 +152,20 @@ export default function Productfull() {
   }
 
   return (
-    <Container fluid className="m-4 w-100">
+    <Container className="my-5">
       <Row>
         <Col md={6}>
-          <div className="bg-body d-flex flex-column justify-content-center">
-            <div className='d-flex justify-content-center'> 
+          <div className="d-flex flex-column align-items-center">
+            <div className='mb-4'> 
               <img 
                 src={currentImg} 
-                alt={product.name }   
-                style={{width: '350px', height: 'auto', objectFit: 'contain'}}
-                className="img-fluid mb-3"
+                alt={product.name}   
+                style={{
+                  maxWidth: '100%', 
+                  height: '400px', 
+                  objectFit: 'contain'
+                }}
+                className="img-fluid"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = defaultImage;
@@ -177,7 +174,7 @@ export default function Productfull() {
             </div>
             
             {productImages.length > 1 && (
-              <div className='d-flex justify-content-center gap-3 flex-wrap'>
+              <div className='d-flex flex-wrap gap-2 justify-content-center'>
                 {productImages.map((img, index) => (
                   <img 
                     key={index}
@@ -190,7 +187,7 @@ export default function Productfull() {
                       objectFit: 'cover',
                       border: currentImg === getImageUrl(img) ? '2px solid #0d6efd' : '1px solid #ddd'
                     }}  
-                    onClick={() => handleClick(img)}
+                    onClick={() => handleImageClick(img)}
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = defaultImage;
@@ -203,40 +200,53 @@ export default function Productfull() {
         </Col>
         
         <Col md={6}>
-          <div>
-            <h2>{product.name}</h2>
-            <hr/>
-            {product.Description && (
+          <div className="product-details">
+            <h2 className="mb-3">{product.name}</h2>
+            
+            {product.description && (
               <div className="mb-4">
-                <p>{product.Description}</p>
+                <h5>Description</h5>
+                <p className="text-muted">{product.description}</p>
               </div>
             )}
-            <hr/>
-            <h5 className='text-primary'><span style={{color:"black"}}>Marque : </span><h6 style={{display:"inline"}}>{product.Marque}</h6> </h5>
-            { product.type === "Stockage" &&(
-            <h5>catégorie : <h6 style={{display:"inline"}}>{product?.['Sous-catégories'].replace(/_/g, ' ')}</h6></h5>
-              )}
-
             
-            <hr/>
-            
-            <span className="current-price fw-bold fs-2">
-              {product.Prix} DH
-            </span>
-            <br/>
-
-            <hr/>
-
-            <div className="d-flex gap-3">
-              <Button 
-                variant="warning" 
-                className="add-to-cart-btn"
-                disabled={!product.Quantité_en_stock || product.Quantité_en_stock <= 0}
-                onClick={addToCart}
-              >
-                {product.Quantité_en_stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-              </Button>
+            <div className="mb-4">
+              <h5>Price</h5>
+              <p className="text-primary fs-3 fw-bold">
+                {product.price} DH
+              </p>
             </div>
+            
+            {product.brand && (
+              <div className="mb-4">
+                <h5>Brand</h5>
+                <p>{product.brand}</p>
+              </div>
+            )}
+            
+            {product.category && (
+              <div className="mb-4">
+                <h5>Category</h5>
+                <p>{product.category}</p>
+              </div>
+            )}
+            
+            <div className="mb-4">
+              <h5>Availability</h5>
+              <p className={product.stock > 0 ? 'text-success' : 'text-danger'}>
+                {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+              </p>
+            </div>
+            
+            <Button 
+              variant="primary" 
+              size="lg"
+              className="mt-3"
+              disabled={!product.stock || product.stock <= 0}
+              onClick={addToCart}
+            >
+              {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+            </Button>
           </div>
         </Col>
       </Row>
