@@ -82,7 +82,7 @@ const ProductCard = ({ product }) => {
 
       <Card.Body>
         <Card.Title className="mb-2">{title}</Card.Title>
-        <h5 className="text-primary">${price}</h5>
+        <h5 className="text-primary">{price} DH</h5>
 
         <div className="d-flex align-items-center mb-2">
           {[...Array(5)].map((_, index) => (

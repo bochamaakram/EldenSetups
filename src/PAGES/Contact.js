@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
+import { Breadcrumb, Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import '../CSS/ContactPage.css';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-
-
-
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +9,7 @@ const ContactPage = () => {
     phone: '',
     message: ''
   });
+  const [submissionStatus, setSubmissionStatus] = useState(null); // null, 'success', or 'error'
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,117 +20,136 @@ const ContactPage = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  try {
-    const response = await fetch('http://localhost:8000/api/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    });
-
-    const data = await response.json();
+    e.preventDefault();
     
-    if (response.ok) {
-      console.log('Form submitted successfully:', data);
-      // Clear the form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        message: ''
+    try {
+      const response = await fetch('http://localhost:8000/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
       });
-      // Show success message to user
-      alert('Thank you for your message! We will contact you soon.');
-    } else {
-      throw new Error(data.message || 'Failed to submit form');
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        console.log('Form submitted successfully:', data);
+        // Clear the form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          message: ''
+        });
+        setSubmissionStatus('success');
+      } else {
+        throw new Error(data.message || 'Failed to submit form');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmissionStatus('error');
     }
-  } catch (error) {
-    console.error('Error submitting form:', error);
-    alert('There was an error submitting your form. Please try again.');
-  }
-};
+  };
 
   return (
-    <div className="contact-page">
+    <Container className="contact-page py-4">
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb className="mb-4">
+        <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
+        <Breadcrumb.Item active>Contact</Breadcrumb.Item>
+      </Breadcrumb>
 
-      <Breadcrumb>
-      <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
-      
-      <Breadcrumb.Item active>Contact</Breadcrumb.Item>
-    </Breadcrumb>
-  
+      {/* Submission Status Alerts */}
+      {submissionStatus === 'success' && (
+        <Alert variant="success" onClose={() => setSubmissionStatus(null)} dismissible>
+          Thank you for your message! We will contact you soon.
+        </Alert>
+      )}
+      {submissionStatus === 'error' && (
+        <Alert variant="danger" onClose={() => setSubmissionStatus(null)} dismissible>
+          There was an error submitting your form. Please try again.
+        </Alert>
+      )}
 
-      <div className="contact-container">
-        <div className="contact-info">
-          <div className="contact-section">
-            <h3>Call To Us</h3>
-            <p>We are available 24/7, 7 days a week.</p>
-            <p>Phone: +00 00 00 00 00</p>
+      <Row className="contact-container g-4">
+        {/* Contact Information Column */}
+        <Col lg={4} className="contact-info">
+          <div className="contact-section mb-4 p-3 bg-light rounded">
+            <h3 className="mb-3">Call To Us</h3>
+            <p className="mb-1">We are available 24/7, 7 days a week.</p>
+            <p className="mb-0">Phone: +00 00 00 00 00</p>
           </div>
 
-          <div className="contact-section">
-            <h3>Write To US</h3>
-            <p>Fill out our form and we will contact you within 24 hours.</p>
-            <p>Emails: customer@exclusive.com</p>
-            <p>Emails: support@exclusive.com</p>
+          <div className="contact-section p-3 bg-light rounded">
+            <h3 className="mb-3">Write To US</h3>
+            <p className="mb-1">Fill out our form and we will contact you within 24 hours.</p>
+            <p className="mb-1">Emails: customer@exclusive.com</p>
+            <p className="mb-0">Emails: support@exclusive.com</p>
           </div>
-        </div>
+        </Col>
 
-        <form onSubmit={handleSubmit} className="contact-form">
-          <div className="form-row">
-            <div className="form-group">
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name *"
-                value={formData.name}
+        {/* Contact Form Column */}
+        <Col lg={8}>
+          <Form onSubmit={handleSubmit} className="contact-form p-4 bg-light rounded">
+            <Row className="mb-3">
+              <Col md={4} className="mb-3 mb-md-0">
+                <Form.Group controlId="formName">
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    placeholder="Your Name *"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={4} className="mb-3 mb-md-0">
+                <Form.Group controlId="formEmail">
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    placeholder="Your Email *"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group controlId="formPhone">
+                  <Form.Control
+                    type="tel"
+                    name="phone"
+                    placeholder="Your Phone *"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Form.Group className="mb-4" controlId="formMessage">
+              <Form.Control
+                as="textarea"
+                name="message"
+                placeholder="Your Message"
+                value={formData.message}
                 onChange={handleChange}
-                required
+                rows={5}
               />
-            </div>
-            <div className="form-group">
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email *"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Your Phone *"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
+            </Form.Group>
 
-          <div className="form-group">
-            <textarea
-              name="message"
-              placeholder="Your Massage"
-              value={formData.message}
-              onChange={handleChange}
-              rows="5"
-            ></textarea>
-          </div>
-
-          <button type="submit" className="send-message-btn">
-            Send Massage
-          </button>
-        </form>
-      </div>
-
-    </div>
+            <Button variant="primary" type="submit" className="send-message-btn w-100">
+              Send Message
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

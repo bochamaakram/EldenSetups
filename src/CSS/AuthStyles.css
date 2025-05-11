@@ -173,3 +173,17 @@
   font-size: 12px;
   color: #007bff;
 }
+@media (max-width: 800px) {
+  .auth-container {
+    flex-direction: column;
+    padding: 2rem;
+  }
+  .auth-form {
+    padding: 1.5rem;
+    width: 100%;
+  }
+  
+  .auth-form h2 {
+    font-size: 1.5rem;
+  }
+}
