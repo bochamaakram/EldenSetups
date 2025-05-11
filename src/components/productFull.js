@@ -217,17 +217,24 @@ export default function ProductFull() {
               </p>
             </div>
             
-            {product.brand && (
+            {product.catégorie && (
               <div className="mb-4">
-                <h5>Brand</h5>
-                <p>{product.brand}</p>
+                <h5>Catégorie</h5>
+                <p>{product.catégorie}</p>
               </div>
             )}
             
-            {product.category && (
+            {product.subCatégorie && (
               <div className="mb-4">
-                <h5>Category</h5>
-                <p>{product.category}</p>
+                <h5>Sous-catégorie</h5>
+                <p>{product.subCatégorie}</p>
+              </div>
+            )}
+            
+            {product.rating && (
+              <div className="mb-4">
+                <h5>Rating</h5>
+                <p>{product.rating}</p>
               </div>
             )}
             

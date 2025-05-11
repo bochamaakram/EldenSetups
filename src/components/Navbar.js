@@ -30,7 +30,7 @@ const CustomNavbar = () => {
                         <Nav.Link href="/Cart">
                             <i className="bi bi-cart-fill" style={{ fontSize: '1.5rem', color: '#1E3A8A' }}></i>
                         </Nav.Link>
-                        <Nav.Link href="/login">
+                        <Nav.Link href="/profil">
                             <i className="bi bi-person" style={{ fontSize: '1.5rem', color: '#000' }}></i>
                         </Nav.Link>
                     </Nav>

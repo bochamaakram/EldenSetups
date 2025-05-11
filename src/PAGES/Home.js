@@ -267,7 +267,6 @@ export default function Home() {
                     padding: 20px;
                     height: 100%;
                 }
-                
                 .feature-icon {
                     background-color: #000;
                     border: 13px solid #ccc;

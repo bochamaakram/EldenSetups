@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export default function AddProduct(){
+export default function AddProduct() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
-        category: '',
+        catégorie: '',
+        subCatégorie: '',
         description: '',
         price: '',
+        rating: '',
+        stock: '',
         image: null,
         specs: [{ key: '', value: '' }]
     });
@@ -49,9 +52,12 @@ export default function AddProduct(){
         try {
             const formDataToSend = new FormData();
             formDataToSend.append('name', formData.name);
-            formDataToSend.append('category', formData.category);
+            formDataToSend.append('catégorie', formData.catégorie);
+            formDataToSend.append('subCatégorie', formData.subCatégorie);
             formDataToSend.append('description', formData.description);
             formDataToSend.append('price', formData.price);
+            formDataToSend.append('rating', formData.rating);
+            formDataToSend.append('stock', formData.stock);
             formDataToSend.append('image', formData.image);
             
             formData.specs.forEach((spec, index) => {
@@ -103,26 +109,47 @@ export default function AddProduct(){
 
                         <div className="col-md-6">
                             <div className="mb-3">
-                                <label htmlFor="category" className="form-label">
-                                    Category <span className="text-danger">*</span>
+                                <label htmlFor="catégorie" className="form-label">
+                                    Catégorie <span className="text-danger">*</span>
                                 </label>
                                 <select
-                                    className={`form-select ${errors.category ? 'is-invalid' : ''}`}
-                                    id="category"
-                                    name="category"
-                                    value={formData.category}
+                                    className={`form-select ${errors.catégorie ? 'is-invalid' : ''}`}
+                                    id="catégorie"
+                                    name="catégorie"
+                                    value={formData.catégorie}
                                     onChange={handleChange}
                                     required
                                 >
-                                    <option value="">Select Category</option>
+                                    <option value="">Select Catégorie</option>
                                     <option value="Desktop PC">Desktop PC</option>
                                     <option value="Laptop">Laptop</option>
                                     <option value="Components">Components</option>
                                     <option value="Peripherals">Peripherals</option>
                                     <option value="Accessories">Accessories</option>
                                 </select>
-                                {errors.category && (
-                                    <div className="invalid-feedback">{errors.category[0]}</div>
+                                {errors.catégorie && (
+                                    <div className="invalid-feedback">{errors.catégorie[0]}</div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="row mb-3">
+                        <div className="col-md-6">
+                            <div className="mb-3">
+                                <label htmlFor="subCatégorie" className="form-label">
+                                    Sous-catégorie
+                                </label>
+                                <input
+                                    type="text"
+                                    className={`form-control ${errors.subCatégorie ? 'is-invalid' : ''}`}
+                                    id="subCatégorie"
+                                    name="subCatégorie"
+                                    value={formData.subCatégorie}
+                                    onChange={handleChange}
+                                />
+                                {errors.subCatégorie && (
+                                    <div className="invalid-feedback">{errors.subCatégorie[0]}</div>
                                 )}
                             </div>
                         </div>
@@ -147,10 +174,10 @@ export default function AddProduct(){
                     </div>
 
                     <div className="row mb-3">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <div className="mb-3">
                                 <label htmlFor="price" className="form-label">
-                                    Price ($) <span className="text-danger">*</span>
+                                    Price (DH) <span className="text-danger">*</span>
                                 </label>
                                 <input
                                     type="number"
@@ -169,7 +196,28 @@ export default function AddProduct(){
                             </div>
                         </div>
 
-                        <div className="col-md-6">
+                        <div className="col-md-4">
+                            <div className="mb-3">
+                                <label htmlFor="stock" className="form-label">
+                                    Stock <span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    className={`form-control ${errors.stock ? 'is-invalid' : ''}`}
+                                    id="stock"
+                                    name="stock"
+                                    value={formData.stock}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                {errors.stock && (
+                                    <div className="invalid-feedback">{errors.stock[0]}</div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="col-md-4">
                             <div className="mb-3">
                                 <label htmlFor="image" className="form-label">
                                     Product Image <span className="text-danger">*</span>
@@ -181,7 +229,6 @@ export default function AddProduct(){
                                     name="image"
                                     accept="image/*"
                                     onChange={handleChange}
-                                    required
                                 />
                                 {errors.image && (
                                     <div className="invalid-feedback">{errors.image[0]}</div>
@@ -190,63 +237,7 @@ export default function AddProduct(){
                         </div>
                     </div>
 
-                    <div className="mb-4">
-                        <label className="form-label">
-                            Specifications <span className="text-danger">*</span>
-                        </label>
-                        <div id="specs-container">
-                            {formData.specs.map((spec, index) => (
-                                <div className="row mb-2 spec-row" key={index}>
-                                    <div className="col-md-5">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Key (e.g. CPU)"
-                                            value={spec.key}
-                                            onChange={(e) => handleSpecChange(index, 'key', e.target.value)}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="col-md-5">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Value (e.g. Intel Core i9)"
-                                            value={spec.value}
-                                            onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="col-md-2">
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-danger remove-spec"
-                                            onClick={() => removeSpecRow(index)}
-                                            disabled={formData.specs.length === 1}
-                                        >
-                                            <i className="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <button
-                            type="button"
-                            className="btn btn-outline-primary btn-sm mt-2"
-                            onClick={addSpecRow}
-                        >
-                            <i className="fas fa-plus me-1"></i> Add Specification
-                        </button>
-                    </div>
-
-                    <div className="d-flex justify-content-between">
-                        <button
-                            type="button"
-                            className="btn btn-secondary"
-                            onClick={() => navigate('/admin/products')}
-                        >
-                            <i className="fas fa-arrow-left me-2"></i> Back to Products
-                        </button>
+                    <div className="mb-3">
                         <button type="submit" className="btn btn-primary">
                             <i className="fas fa-save me-2"></i> Save Product
                         </button>
@@ -255,5 +246,4 @@ export default function AddProduct(){
             </div>
         </div>
     );
-};
-
+}
