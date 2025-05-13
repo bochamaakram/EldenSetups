@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Tab, Row, Col, Nav, Form, Button } from "react-bootstrap";
-import AddProduct from "../components/FormProduct"; // ✅ Make sure this path is correct
+import AddProduct from "../components/FormProduct";
 import Statistics from "../components/static";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -11,7 +11,7 @@ export default function Profil() {
   const handleLogout = async () => {
     try {
       await logout(); // Call the logout function
-      window.location.href = "/login-register"; // Redirect to login/register page
+      window.location.href = "/login"; // Redirect to login/register page
     } catch (error) {
       console.error("Failed to logout:", error);
     }

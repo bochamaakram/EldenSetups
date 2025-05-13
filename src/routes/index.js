@@ -3,6 +3,7 @@ import Aboutt from "../PAGES/about";
 import Contact from "../PAGES/Contact";
 import Home from "../PAGES/Home";
 import Login from "../PAGES/LoginRegister";
+import BrowseByCategory from "../PAGES/BrowseByCategory";
 import Profil from "../PAGES/profil";
 import Layout from "../layouts/layout";
 import NotFound from "../PAGES/not";
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
             {
                 path:'/',
                 element:<Home/>
+            },
+            {
+                path:'/products',
+                element:<BrowseByCategory />
             },
             {
                 path:'/about',

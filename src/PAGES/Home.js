@@ -1,6 +1,8 @@
 import { Row, Col, Container } from 'react-bootstrap';
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios"; 
+
 import Slider from '../components/Slider';
 import Countdown from '../components/countdown';
 import ProductCard from '../components/product';
@@ -18,14 +20,13 @@ export default function Home() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
-    // Fetch products from API
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch products
-                const productsResponse = await axios.get('http://localhost:8000/api/products');
-                setProducts(productsResponse.data);
+                const response = await axios.get('http://localhost:8000/api/products');
+                setProducts(response.data);
                 setLoading(false);
             } catch (err) {
                 setError(err.message);
@@ -37,11 +38,10 @@ export default function Home() {
         fetchData();
     }, []);
 
-    // Static categories (since we're only getting products from API)
     const staticCategories = [
-        { img: or, name: "monitor", id: 1 },
+        { img: or, name: "Monitor", id: 1 },
         { img: c, name: "Web Cam", id: 2 },
-        { img: cm, name: "Pc Accessories", id: 3 },
+        { img: cm, name: "PC Accessories", id: 3 },
         { img: jeu, name: "Games", id: 4 },
         { img: pro, name: "Processor", id: 5 },
         { img: cg, name: "Graphics Card", id: 6 }
@@ -50,14 +50,14 @@ export default function Home() {
     if (loading) return <div className="text-center py-5">Loading products...</div>;
     if (error) return <div className="text-center py-5 text-danger">Error: {error}</div>;
 
-    return ( 
+    return (
         <div className="home-page">
-            {/* Slider Section - Full width */}
+            {/* Slider */}
             <section className="mb-5">
-                <Slider/>
+                <Slider />
             </section>
-            
-            {/* Flash Sales Section */}
+
+            {/* Flash Sales */}
             <Container className="mb-5">
                 <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between mb-4">
                     <div>
@@ -66,11 +66,10 @@ export default function Home() {
                     </div>
                     <Countdown />
                 </div>
-                
-                <Row className="g-4">
-                    {products.slice(0, 8).map((product) => (
-                        <Col xs={12} sm={6} md={4} lg={3} key={product.id}>
-                            <ProductCard 
+                <div className="d-flex flex-wrap justify-content-center gap-4">
+                    {products.slice(0, 8).map(product => (
+                        <div className="product-card" key={product.id} onClick={() => navigate(`/Details/${product.id}`)}>
+                            <ProductCard
                                 product={product}
                                 name={product.name}
                                 price={product.price}
@@ -79,49 +78,43 @@ export default function Home() {
                                 stock={product.stock}
                                 image={product.image}
                             />
-                        </Col>
+                        </div>
                     ))}
-                </Row>
-            </Container>
-            
-            {/* Categories Section */}
-            <Container className="my-5">
-                <h4 className="section-title">Categories</h4>
-                <h2 className="mb-4">Browse By Category</h2>
-                
-                <Row className="justify-content-center g-4">
-                    {staticCategories.map((category) => (
-                        <Col xs={6} sm={4} md={3} lg={2} key={category.id}>
-                            <div className="category-card">
-                                <img 
-                                    src={category.img} 
-                                    alt={category.name} 
-                                    className="category-img"
-                                />
-                                <p className="category-name">{category.name}</p>            
-                            </div>   
-                        </Col>
-                    ))}
-                </Row>
-            </Container>
-
-            {/* Banner Section */}
-            <Container className="my-5">
-                <div className="promo-banner">
-                    <p className="promo-text">Shop Our Latest Collection</p>
-                    <button className="promo-button">Shop Now</button>
                 </div>
             </Container>
 
-            {/* All Products Section */}
+            {/* Categories */}
+            <Container className="my-5">
+                <h4 className="section-title">Categories</h4>
+                <h2 className="mb-4">Browse By Category</h2>
+                <Row className="justify-content-center g-4">
+                    {staticCategories.map(category => (
+                        <Col xs={6} sm={4} md={3} lg={2} key={category.id}>
+                            <div className="category-card" onClick={() => navigate(`/products`)}>
+                                <img src={category.img} alt={category.name} className="category-img" />
+                                <p className="category-name">{category.name}</p>
+                            </div>
+                        </Col>
+                    ))}
+                </Row>
+            </Container>
+
+            {/* Promo Banner */}
+            <Container className="my-5">
+                <div className="promo-banner">
+                    <p className="promo-text">Shop Our Latest Collection</p>
+                    <button className="promo-button" onClick={() => navigate('/products')}>Shop Now</button>
+                </div>
+            </Container>
+
+            {/* All Products */}
             <Container className="my-5">
                 <h4 className="section-title">Our Products</h4>
                 <h2 className="mb-4">Explore our products</h2>
-                
-                <Row className="g-4">
-                    {products.map((product) => (
-                        <Col xs={12} sm={6} md={4} lg={3} key={product.id}>
-                            <ProductCard 
+                <div className="d-flex flex-wrap justify-content-center gap-4">
+                    {products.map(product => (
+                        <div className="product-card" key={product.id} onClick={() => navigate(`/Details/${product.id}`)}>
+                            <ProductCard
                                 product={product}
                                 name={product.name}
                                 price={product.price}
@@ -130,15 +123,15 @@ export default function Home() {
                                 stock={product.stock}
                                 image={product.image}
                             />
-                        </Col>
+                        </div>
                     ))}
-                </Row>
+                </div>
             </Container>
 
-            {/* Features Section */}
-            <Container className="my-5 features-section">
-                <Row className="g-4">
-                    <Col xs={12} md={4}>
+            {/* Features */}
+            <Container className="my-5">
+                <Row className="g-4 text-center">
+                    <Col md={4}>
                         <div className="feature-card">
                             <div className="feature-icon">
                                 <i className="bi bi-truck"></i>
@@ -147,7 +140,7 @@ export default function Home() {
                             <p>Free delivery for all orders over $140</p>
                         </div>
                     </Col>
-                    <Col xs={12} md={4}>
+                    <Col md={4}>
                         <div className="feature-card">
                             <div className="feature-icon">
                                 <i className="bi bi-headset"></i>
@@ -156,7 +149,7 @@ export default function Home() {
                             <p>Friendly 24/7 customer support</p>
                         </div>
                     </Col>
-                    <Col xs={12} md={4}>
+                    <Col md={4}>
                         <div className="feature-card">
                             <div className="feature-icon">
                                 <i className="bi bi-shield-check"></i>
@@ -168,72 +161,56 @@ export default function Home() {
                 </Row>
             </Container>
 
-            {/* Add this CSS in your global stylesheet or component */}
-            <style jsx>{`
+            {/* Embedded Styles */}
+            <style jsx="true">{`
                 .section-title {
-                    border-left: 15px #1E3A8A solid;
+                    border-left: 15px solid #1E3A8A;
                     color: #1E3A8A;
-                    border-radius: 3px;
                     padding-left: 10px;
                     margin-bottom: 0.5rem;
                 }
-                
+                .product-card {
+                    width: 250px;
+                }
                 .category-card {
                     border: 1px solid #E5E7EB;
                     border-radius: 5px;
                     padding: 30px 15px;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
+                    text-align: center;
                     cursor: pointer;
                     transition: all 0.3s ease;
                     background-color: #FFFFFF;
                     height: 100%;
                 }
-                
                 .category-card:hover {
                     background-color: #1E3A8A;
                 }
-                
                 .category-card:hover .category-img {
                     filter: brightness(0) invert(1);
                 }
-                
                 .category-card:hover .category-name {
                     color: white;
                 }
-                
                 .category-img {
                     width: 60px;
-                    height: auto;
                     transition: filter 0.3s ease;
                 }
-                
                 .category-name {
                     margin-top: 15px;
-                    margin-bottom: 0;
-                    color: #1F2937;
-                    transition: color 0.3s ease;
-                    text-align: center;
                     font-size: 0.9rem;
+                    color: #1F2937;
                 }
-                
                 .promo-banner {
                     height: 300px;
-                    position: relative;
-                    background-image: url(${bgo});
-                    background-repeat: no-repeat;
-                    background-size: cover;
-                    background-position: center;
+                    background: url(${bgo}) center/cover no-repeat;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
                     padding: 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    position: relative;
                 }
-                
                 .promo-text {
                     color: #fff;
                     font-size: 1.5rem;
@@ -241,7 +218,6 @@ export default function Home() {
                     text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
                     max-width: 60%;
                 }
-                
                 .promo-button {
                     background-color: transparent;
                     border: 2px solid #28a745;
@@ -253,19 +229,16 @@ export default function Home() {
                     font-size: 1rem;
                     font-weight: bold;
                     cursor: pointer;
-                    transition: all 0.3s ease;
                     color: #28a745;
+                    transition: all 0.3s ease;
                 }
-                
                 .promo-button:hover {
                     background-color: #28a745;
                     color: #fff;
                 }
-                
                 .feature-card {
-                    text-align: center;
                     padding: 20px;
-                    height: 100%;
+                    background-color: #fff;
                 }
                 .feature-icon {
                     background-color: #000;
@@ -278,22 +251,18 @@ export default function Home() {
                     align-items: center;
                     margin: 0 auto 10px auto;
                 }
-                
                 .feature-icon i {
                     color: #fff;
                     font-size: 28px;
                 }
-                
                 @media (max-width: 768px) {
                     .promo-banner {
                         height: 200px;
                     }
-                    
                     .promo-text {
                         font-size: 1.2rem;
                         max-width: 100%;
                     }
-                    
                     .category-card {
                         padding: 15px 10px;
                     }

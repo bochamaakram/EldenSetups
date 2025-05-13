@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button, Card, Container, Form, Alert, Row, Col, Modal, Badge } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { Button, Card, Container, Form, Alert, Row, Col, Modal } from 'react-bootstrap';
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
@@ -21,29 +21,28 @@ export default function Cart() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchCartData = async () => {
+        const fetchCartItems = async () => {
             try {
-                // Fetch cart items
-                const itemsResponse = await fetch(`${API_BASE_URL}/cart`, {
-                    credentials: 'include'
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    navigate('/login');
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/cart-items`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
                 });
-                
-                if (!itemsResponse.ok) {
+
+                if (!response.ok) {
                     throw new Error('Failed to fetch cart items');
                 }
-                
-                const itemsData = await itemsResponse.json();
-                setCartItems(itemsData.items || []);
 
-                // Fetch cart count
-                const countResponse = await fetch(`${API_BASE_URL}/cart/count`, {
-                    credentials: 'include'
-                });
-                
-                if (countResponse.ok) {
-                    const countData = await countResponse.json();
-                    setCartCount(countData.count);
-                }
+                const data = await response.json();
+                setCartItems(data);
+                setCartCount(data.length || 0);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -51,105 +50,52 @@ export default function Cart() {
             }
         };
 
-        fetchCartData();
-    }, []);
+        fetchCartItems();
+    }, [navigate]);
 
-    const handleQuantityChange = async (itemId, newQuantity) => {
-        if (newQuantity < 1) return;
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}/cart/update`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    item_id: itemId,
-                    quantity: newQuantity
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to update quantity');
-            }
-            
-            const updatedCart = await response.json();
-            setCartItems(updatedCart.items);
-            setCartCount(updatedCart.count || 0);
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
-    const removeItem = async (itemId) => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/cart/remove`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({ item_id: itemId })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to remove item');
-            }
-            
-            const updatedCart = await response.json();
-            setCartItems(updatedCart.items);
-            setCartCount(updatedCart.count || 0);
-        } catch (err) {
-            setError(err.message);
-        }
+    const calculateTotal = () => {
+        return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     };
 
     const handlePaymentSubmit = async (e) => {
         e.preventDefault();
         setPaymentError(null);
-        
+
         try {
-            // Validate payment info
             if (!paymentInfo.card_number || !paymentInfo.expiry_date || !paymentInfo.cvv || !paymentInfo.card_holder) {
                 throw new Error('All payment fields are required');
             }
-            
-            // Process payment
+
             const response = await fetch(`${API_BASE_URL}/checkout`, {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                credentials: 'include',
                 body: JSON.stringify({
                     payment_info: paymentInfo,
                     items: cartItems
                 })
             });
-            
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Payment failed');
             }
-            
+
             const result = await response.json();
             setSuccessMessage('Payment successful! Your order has been placed.');
             setCartItems([]);
             setCartCount(0);
             setShowPaymentModal(false);
-            
-            // Redirect to order confirmation after 3 seconds
+
             setTimeout(() => {
                 navigate(`/order-confirmation/${result.order_id}`);
             }, 3000);
         } catch (err) {
             setPaymentError(err.message);
         }
-    };
-
-    const calculateTotal = () => {
-        return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     };
 
     if (loading) {
@@ -162,7 +108,7 @@ export default function Cart() {
 
     if (cartItems.length === 0) {
         return (
-            <Container className="mt-4">
+            <Container className="mt-4" style={{ minHeight: '90vh' }}>
                 <Alert variant="info">Your cart is empty</Alert>
                 <Button variant="primary" onClick={() => navigate('/')}>Continue Shopping</Button>
             </Container>
@@ -170,12 +116,11 @@ export default function Cart() {
     }
 
     return (
-        <Container className="mt-4">
+        <Container className="mt-4" style={{ minHeight: '90vh' }}>
             {successMessage && <Alert variant="success">{successMessage}</Alert>}
-            
+
             <h2>Your Cart</h2>
-            <p>Maximum 3 products allowed in cart</p>
-            
+
             <Row>
                 <Col md={8}>
                     {cartItems.map(item => (
@@ -184,43 +129,28 @@ export default function Cart() {
                                 <Row>
                                     <Col md={3}>
                                         <img 
-                                            src={item.image || '/default-product-image.jpg'} 
+                                            src={`http://localhost:8000/${item.image}`} 
                                             alt={item.name}
                                             style={{ width: '100%', height: 'auto' }}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = '/default-product-image.jpg';
+                                            }}
                                         />
                                     </Col>
                                     <Col md={6}>
                                         <Card.Title>{item.name}</Card.Title>
                                         <Card.Text>
                                             Price: {item.price} DH<br/>
-                                            Type: {item.product_type}
+                                            Quantity: {item.quantity}
                                         </Card.Text>
-                                    </Col>
-                                    <Col md={3}>
-                                        <Form.Group controlId={`quantity-${item.id}`}>
-                                            <Form.Label>Quantity</Form.Label>
-                                            <Form.Control 
-                                                type="number" 
-                                                min="1" 
-                                                value={item.quantity}
-                                                onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))}
-                                            />
-                                        </Form.Group>
-                                        <Button 
-                                            variant="danger" 
-                                            size="sm" 
-                                            className="mt-2"
-                                            onClick={() => removeItem(item.id)}
-                                        >
-                                            Remove
-                                        </Button>
                                     </Col>
                                 </Row>
                             </Card.Body>
                         </Card>
                     ))}
                 </Col>
-                
+
                 <Col md={4}>
                     <Card>
                         <Card.Body>
@@ -239,13 +169,13 @@ export default function Cart() {
                                 onClick={() => setShowPaymentModal(true)}
                                 disabled={cartItems.length === 0}
                             >
-                                Commander
+                                Proceed to Payment
                             </Button>
                         </Card.Body>
                     </Card>
                 </Col>
             </Row>
-            
+
             {/* Payment Modal */}
             <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)}>
                 <Modal.Header closeButton>
@@ -260,10 +190,10 @@ export default function Cart() {
                                 type="text" 
                                 placeholder="1234 5678 9012 3456"
                                 value={paymentInfo.card_number}
-                                onChange={(e) => setPaymentInfo({...paymentInfo, card_number: e.target.value})}
+                                onChange={(e) => setPaymentInfo({ ...paymentInfo, card_number: e.target.value })}
                             />
                         </Form.Group>
-                        
+
                         <Row className="mb-3">
                             <Col md={6}>
                                 <Form.Group>
@@ -272,7 +202,7 @@ export default function Cart() {
                                         type="text" 
                                         placeholder="MM/YY"
                                         value={paymentInfo.expiry_date}
-                                        onChange={(e) => setPaymentInfo({...paymentInfo, expiry_date: e.target.value})}
+                                        onChange={(e) => setPaymentInfo({ ...paymentInfo, expiry_date: e.target.value })}
                                     />
                                 </Form.Group>
                             </Col>
@@ -283,22 +213,22 @@ export default function Cart() {
                                         type="text" 
                                         placeholder="123"
                                         value={paymentInfo.cvv}
-                                        onChange={(e) => setPaymentInfo({...paymentInfo, cvv: e.target.value})}
+                                        onChange={(e) => setPaymentInfo({ ...paymentInfo, cvv: e.target.value })}
                                     />
                                 </Form.Group>
                             </Col>
                         </Row>
-                        
+
                         <Form.Group className="mb-3">
                             <Form.Label>Card Holder Name</Form.Label>
                             <Form.Control 
                                 type="text" 
                                 placeholder="John Doe"
                                 value={paymentInfo.card_holder}
-                                onChange={(e) => setPaymentInfo({...paymentInfo, card_holder: e.target.value})}
+                                onChange={(e) => setPaymentInfo({ ...paymentInfo, card_holder: e.target.value })}
                             />
                         </Form.Group>
-                        
+
                         <Button variant="primary" type="submit">
                             Submit Payment
                         </Button>
